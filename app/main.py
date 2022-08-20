@@ -9,7 +9,6 @@ ha_ip = os.environ['HA_IP']
 ha_port = os.environ['HA_PORT']
 ha_entity = os.environ['HA_ENTITY']
 ha_token = os.environ['HA_TOKEN']
-ha_brightness = os.environ['HA_BRIGHTNESS']
 ha_domain = ha_entity.split('.')[0]
 
 
@@ -19,33 +18,34 @@ headers = {
     "Content-Type": "application/json"
 }
 
-def payload_color(color_name):
+def payload(option):
     payload = {
-        "entity_id": ha_entity,
-        "color_name": color_name,
-        "brightness": ha_brightness
+        "option": option,
+        "entity_id": ha_entity
     }
     return payload
 
 @app.post("/available")
 def available():
-    url = base_url + "turn_on"
-    post(url, headers=headers, json=payload_color("green"))
+    url = base_url + "select_option"
+    post(url, headers=headers, json=payload("available"))
     
 @app.post("/busy")
 def busy():
-    url = base_url + "turn_on"
-    post(url, headers=headers, json=payload_color("red"))
+    url = base_url + "select_option"
+    post(url, headers=headers, json=payload("busy"))
 
 @app.post("/away")
 def away():
-    url = base_url + "turn_on"
-    post(url, headers=headers, json=payload_color("yellow"))
+    url = base_url + "select_option"
+    post(url, headers=headers, json=payload("away"))
 
 @app.post("/offline")
 def offline():
-    url = base_url + "turn_off"
-    payload = {
-        "entity_id": ha_entity
-    }
-    post(url, headers=headers, json=payload)
+    url = base_url + "select_option"
+    post(url, headers=headers, json=payload("offline"))
+
+@app.post("/active_available")
+def active_available():
+    url = base_url + "select_option"
+    post(url, headers=headers, json=payload("active_available"))
